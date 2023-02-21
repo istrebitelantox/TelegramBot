@@ -13,9 +13,7 @@ public class Storage {
     {
         quoteList = new ArrayList<>();
         parser("https://vk.com/jumoreski");
-//        quoteList.add("Начинать всегда стоит с того, что сеет сомнения. \n\nБорис Стругацкий.");
-//        quoteList.add("80% успеха - это появиться в нужном месте в нужное время.\n\nВуди Аллен");
-//        quoteList.add("Мы должны признать очевидное: понимают лишь те,кто хочет понять.\n\nБернар Вербер");
+
     }
 
     String getRandQuote()
