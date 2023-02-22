@@ -9,30 +9,54 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class Bot extends TelegramLongPollingBot {
-    //создаем две константы, присваиваем им значения токена и имя бота соответсвтенно
-    //вместо звездочек подставляйте свои данные
-    final private String BOT_TOKEN = "6230654907:AAFJNsjTrLDqBhQbAe0zXaY0-qmmX15Jsaw";
-    final private String BOT_NAME = "FirstBot";
+    Properties properties=new Properties();
+
     Storage storage;
     ReplyKeyboardMarkup replyKeyboardMarkup;
+    String command =
+            "curl -I http://telegrambot:12345612@localhost:8080/job/demoBuildTelegram/build?token=telegram_test";
 
-    Bot()
-    {
+    ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+
+    Bot() {
         storage = new Storage();
         initKeyboard();
     }
 
     @Override
     public String getBotUsername() {
-        return BOT_NAME;
+        try {
+            properties.load(new FileInputStream("src/main/resources/bot.properties"));
+            return properties.getProperty("bot_name");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public String getBotToken() {
-        return BOT_TOKEN;
+        try {
+            properties.load(new FileInputStream("src/main/resources/bot.properties"));
+            return properties.getProperty("bot_token");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void start() throws IOException {
+        processBuilder.directory(new File("/home/"));
+        Process process = processBuilder.start();
+        InputStream inputStream = process.getInputStream();
+        inputStream.close();
+        System.out.println(process.exitValue());
+        process.destroy();
     }
 
     @Override
@@ -64,11 +88,21 @@ public class Bot extends TelegramLongPollingBot {
     public String parseMessage(String textMsg) {
         String response;
 
+
         //Сравниваем текст пользователя с нашими командами, на основе этого формируем ответ
         if(textMsg.equals("/start"))
             response = "Приветствую, бот знает много анекдотов. Жми \"Посмеятся\", чтобы получить случайный из них";
         else if(textMsg.equals("/get") || textMsg.equals("Посмеяться"))
             response = storage.getRandQuote();
+        else if(textMsg.equals("/jen") || textMsg.equals("Запуск автотестов")) {
+            response = "Тест запускается...";
+            try {
+                start();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
         else
             response = "Сообщение не распознано";
 
@@ -88,6 +122,7 @@ public class Bot extends TelegramLongPollingBot {
         keyboardRows.add(keyboardRow);
         //Добавляем одну кнопку с текстом "Посмеяться" наш ряд
         keyboardRow.add(new KeyboardButton("Посмеяться"));
+        keyboardRow.add(new KeyboardButton("Запуск автотестов"));
         //добавляем лист с одним рядом кнопок в главный объект
         replyKeyboardMarkup.setKeyboard(keyboardRows);
     }
