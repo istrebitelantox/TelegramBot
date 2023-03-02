@@ -16,19 +16,21 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
+
 public class Bot extends TelegramLongPollingBot {
     Properties properties=new Properties();
 
     Storage storage;
     ReplyKeyboardMarkup replyKeyboardMarkup;
     String command =
-            "curl -I http://telegrambot:12345612@localhost:8080/job/demoBuildTelegram/build?token=telegram_test";
+            "curl -I http://telegrambot:1109293c3c465a0292388a6380f72b9c38@0.0.0.0:9090/job/demoBuildTelegram/build?token=telegram_test";
 
     ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+    Process process;
 
     Bot() {
         storage = new Storage();
-        initKeyboard();
+        initKeyboard("Посмеяться","Запуск автотестов");
     }
 
     @Override
@@ -50,12 +52,14 @@ public class Bot extends TelegramLongPollingBot {
             throw new RuntimeException(e);
         }
     }
-    public void start() throws IOException {
+    public void startTest() throws IOException, InterruptedException {
         processBuilder.directory(new File("/home/"));
-        Process process = processBuilder.start();
-        InputStream inputStream = process.getInputStream();
-        inputStream.close();
-        System.out.println(process.exitValue());
+        process = processBuilder.start();
+        process.getInputStream();
+        processBuilder.redirectErrorStream(true);
+        InputStream ins = process.getInputStream();
+        process.waitFor();
+        int exitCode = process.exitValue();
         process.destroy();
     }
 
@@ -88,27 +92,41 @@ public class Bot extends TelegramLongPollingBot {
     public String parseMessage(String textMsg) {
         String response;
 
-
         //Сравниваем текст пользователя с нашими командами, на основе этого формируем ответ
-        if(textMsg.equals("/start"))
-            response = "Приветствую, бот знает много анекдотов. Жми \"Посмеятся\", чтобы получить случайный из них";
-        else if(textMsg.equals("/get") || textMsg.equals("Посмеяться"))
-            response = storage.getRandQuote();
-        else if(textMsg.equals("/jen") || textMsg.equals("Запуск автотестов")) {
-            response = "Тест запускается...";
-            try {
-                start();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        switch (textMsg) {
+            case "/start" ->
+                    response = "Приветствую, бот знает много анекдотов. Жми \"Посмеятся\", чтобы получить случайный из них";
+            case "/get", "Посмеяться" -> response = storage.getRandQuote();
+            case "/jen", "Запуск автотестов" -> {
+                response="Выберите тест";
+                initKeyboard("Project 1","Project 2");
             }
-
+            case "/project1", "Project 1" -> {
+                try {
+                    response = "Тест 1 запускается...";
+                    startTest();
+                    initKeyboard("Посмеяться","Запуск автотестов");
+                    return response;
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case "/project2", "Project 2" -> {
+                response = "Project 2 запускается...";
+                initKeyboard("Посмеяться","Запуск автотестов");
+/*                try {
+                    response = "Тест 2 запускается...";
+                    startTest();
+                    return response;
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }*/
+            }
+            default -> response = "Сообщение не распознано";
         }
-        else
-            response = "Сообщение не распознано";
-
         return response;
     }
-    void initKeyboard()
+    void initKeyboard(String text1, String text2)
     {
         //Создаем объект будущей клавиатуры и выставляем нужные настройки
         replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -121,8 +139,8 @@ public class Bot extends TelegramLongPollingBot {
         KeyboardRow keyboardRow = new KeyboardRow();
         keyboardRows.add(keyboardRow);
         //Добавляем одну кнопку с текстом "Посмеяться" наш ряд
-        keyboardRow.add(new KeyboardButton("Посмеяться"));
-        keyboardRow.add(new KeyboardButton("Запуск автотестов"));
+        keyboardRow.add(new KeyboardButton(text1/*"Посмеяться"*/));
+        keyboardRow.add(new KeyboardButton(text2/*"Запуск автотестов"*/));
         //добавляем лист с одним рядом кнопок в главный объект
         replyKeyboardMarkup.setKeyboard(keyboardRows);
     }
