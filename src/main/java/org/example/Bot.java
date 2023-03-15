@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Scanner;
 
 
 public class Bot extends TelegramLongPollingBot {
@@ -24,9 +25,14 @@ public class Bot extends TelegramLongPollingBot {
     ReplyKeyboardMarkup replyKeyboardMarkup;
     String command =
             "curl -I http://telegrambot:1109293c3c465a0292388a6380f72b9c38@0.0.0.0:9090/job/demoBuildTelegram/build?token=telegram_test";
+    String altCommand =
+            "GET http://localhost:8080/hello";
 
     ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+    ProcessBuilder altProcessBuilder=new ProcessBuilder(altCommand.split(" "));
     Process process;
+    Process process2;
+    String response2;
 
     Bot() {
         storage = new Storage();
@@ -55,12 +61,23 @@ public class Bot extends TelegramLongPollingBot {
     public void startTest() throws IOException, InterruptedException {
         processBuilder.directory(new File("/home/"));
         process = processBuilder.start();
-        process.getInputStream();
+//        process.getInputStream();
         processBuilder.redirectErrorStream(true);
         InputStream ins = process.getInputStream();
         process.waitFor();
         int exitCode = process.exitValue();
         process.destroy();
+    }
+    public void responseReturn() throws IOException, InterruptedException {
+        altProcessBuilder.directory(new File("/home/"));
+        process2 = altProcessBuilder.start();
+        altProcessBuilder.redirectErrorStream(true);
+        InputStream altIns = process2.getInputStream();
+        response2=new Scanner(altIns).useDelimiter("\\A").next();
+        System.out.println(response2);
+        process2.waitFor();
+        int altExitCode = process2.exitValue();
+        process2.destroy();
     }
 
     @Override
@@ -98,7 +115,7 @@ public class Bot extends TelegramLongPollingBot {
                     response = "Приветствую, бот знает много анекдотов. Жми \"Посмеятся\", чтобы получить случайный из них";
             case "/get", "Посмеяться" -> response = storage.getRandQuote();
             case "/jen", "Запуск автотестов" -> {
-                response="Выберите тест";
+                response="Выберите проект";
                 initKeyboard("Project 1","Project 2");
             }
             case "/project1", "Project 1" -> {
@@ -139,8 +156,8 @@ public class Bot extends TelegramLongPollingBot {
         KeyboardRow keyboardRow = new KeyboardRow();
         keyboardRows.add(keyboardRow);
         //Добавляем одну кнопку с текстом "Посмеяться" наш ряд
-        keyboardRow.add(new KeyboardButton(text1/*"Посмеяться"*/));
-        keyboardRow.add(new KeyboardButton(text2/*"Запуск автотестов"*/));
+        keyboardRow.add(new KeyboardButton(text1));
+        keyboardRow.add(new KeyboardButton(text2));
         //добавляем лист с одним рядом кнопок в главный объект
         replyKeyboardMarkup.setKeyboard(keyboardRows);
     }
