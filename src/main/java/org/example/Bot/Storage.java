@@ -1,11 +1,11 @@
-package org.example;
+package org.example.Bot;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import  org.jsoup.select.Elements;
+import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Storage {
     private ArrayList<String> quoteList;

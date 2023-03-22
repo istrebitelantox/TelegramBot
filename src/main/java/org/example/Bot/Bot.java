@@ -1,42 +1,32 @@
-package org.example;
+package org.example.Bot;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Scanner;
 
 
 public class Bot extends TelegramLongPollingBot {
     Properties properties=new Properties();
+    KeyBoard keyBoard=new KeyBoard();
 
     Storage storage;
-    ReplyKeyboardMarkup replyKeyboardMarkup;
     String command =
-            "curl -I http://telegrambot:1109293c3c465a0292388a6380f72b9c38@0.0.0.0:9090/job/demoBuildTelegram/build?token=telegram_test";
-    String altCommand =
-            "GET http://localhost:8080/hello";
+            "curl http://telegrambot:1109293c3c465a0292388a6380f72b9c38@0.0.0.0:9090/job/demoBuildTelegram/build?token=telegram_test";
 
     ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
-    ProcessBuilder altProcessBuilder=new ProcessBuilder(altCommand.split(" "));
     Process process;
-    Process process2;
-    String response2;
 
-    Bot() {
+    public Bot() {
         storage = new Storage();
-        initKeyboard("Посмеяться","Запуск автотестов");
+        keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
     }
 
     @Override
@@ -68,17 +58,6 @@ public class Bot extends TelegramLongPollingBot {
         int exitCode = process.exitValue();
         process.destroy();
     }
-    public void responseReturn() throws IOException, InterruptedException {
-        altProcessBuilder.directory(new File("/home/"));
-        process2 = altProcessBuilder.start();
-        altProcessBuilder.redirectErrorStream(true);
-        InputStream altIns = process2.getInputStream();
-        response2=new Scanner(altIns).useDelimiter("\\A").next();
-        System.out.println(response2);
-        process2.waitFor();
-        int altExitCode = process2.exitValue();
-        process2.destroy();
-    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -97,7 +76,7 @@ public class Bot extends TelegramLongPollingBot {
                 //Добавляем в наше сообщение id чата а также наш ответ
                 outMess.setChatId(chatId);
                 outMess.setText(response);
-                outMess.setReplyMarkup(replyKeyboardMarkup);
+                outMess.setReplyMarkup(keyBoard.replyKeyboardMarkup);
 
                 //Отправка в чат
                 execute(outMess);
@@ -106,23 +85,24 @@ public class Bot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
+
     public String parseMessage(String textMsg) {
         String response;
 
         //Сравниваем текст пользователя с нашими командами, на основе этого формируем ответ
         switch (textMsg) {
-            case "/start" ->
+            case "/start","Старт" ->
                     response = "Приветствую, бот знает много анекдотов. Жми \"Посмеятся\", чтобы получить случайный из них";
             case "/get", "Посмеяться" -> response = storage.getRandQuote();
             case "/jen", "Запуск автотестов" -> {
                 response="Выберите проект";
-                initKeyboard("Project 1","Project 2");
+                keyBoard.initKeyboard("Project 1","Project 2");
             }
             case "/project1", "Project 1" -> {
                 try {
                     response = "Тест 1 запускается...";
                     startTest();
-                    initKeyboard("Посмеяться","Запуск автотестов");
+                    keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
                     return response;
                 } catch (IOException | InterruptedException e) {
                     throw new RuntimeException(e);
@@ -130,35 +110,10 @@ public class Bot extends TelegramLongPollingBot {
             }
             case "/project2", "Project 2" -> {
                 response = "Project 2 запускается...";
-                initKeyboard("Посмеяться","Запуск автотестов");
-/*                try {
-                    response = "Тест 2 запускается...";
-                    startTest();
-                    return response;
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }*/
+                keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
             }
             default -> response = "Сообщение не распознано";
         }
         return response;
-    }
-    void initKeyboard(String text1, String text2)
-    {
-        //Создаем объект будущей клавиатуры и выставляем нужные настройки
-        replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        replyKeyboardMarkup.setResizeKeyboard(true); //подгоняем размер
-        replyKeyboardMarkup.setOneTimeKeyboard(false); //скрываем после использования
-
-        //Создаем список с рядами кнопок
-        ArrayList<KeyboardRow> keyboardRows = new ArrayList<>();
-        //Создаем один ряд кнопок и добавляем его в список
-        KeyboardRow keyboardRow = new KeyboardRow();
-        keyboardRows.add(keyboardRow);
-        //Добавляем одну кнопку с текстом "Посмеяться" наш ряд
-        keyboardRow.add(new KeyboardButton(text1));
-        keyboardRow.add(new KeyboardButton(text2));
-        //добавляем лист с одним рядом кнопок в главный объект
-        replyKeyboardMarkup.setKeyboard(keyboardRows);
     }
 }
