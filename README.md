@@ -1,2 +1,2 @@
 # TelegramBot
-First experience with Telegram Bot in CI/CD Systen
+First experience with Telegram Bot in CI/CD System
