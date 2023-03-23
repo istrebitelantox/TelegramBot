@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Storage {
-    private ArrayList<String> quoteList;
+    private final ArrayList<String> quoteList;
     Storage()
     {
         quoteList = new ArrayList<>();
@@ -38,8 +38,6 @@ public class Storage {
         Elements elQuote = doc.getElementsByClass(className);
 
         //Достаем текст из каждого объекта поочереди и добавляем в наше хранилище
-        elQuote.forEach(el -> {
-            quoteList.add(el.text());
-        });
+        elQuote.forEach(el -> quoteList.add(el.text()));
     }
 }

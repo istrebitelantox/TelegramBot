@@ -1,61 +1,43 @@
 package org.example.Bot;
 
+import org.example.interfaces.IAll;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 
-public class Bot extends TelegramLongPollingBot {
-    Properties properties=new Properties();
-    KeyBoard keyBoard=new KeyBoard();
-
+public class Bot extends TelegramLongPollingBot implements IAll {
     Storage storage;
-    String command =
-            "curl http://telegrambot:1109293c3c465a0292388a6380f72b9c38@0.0.0.0:9090/job/demoBuildTelegram/build?token=telegram_test";
-
-    ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
-    Process process;
+    ProcessBuilder processBuilder = new ProcessBuilder(getProperty.getCommandProperty("command").split(" "));
 
     public Bot() {
         storage = new Storage();
+        keyBoard.setReplyKeyboardMarkup(new ReplyKeyboardMarkup());
         keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
     }
 
     @Override
     public String getBotUsername() {
-        try {
-            properties.load(new FileInputStream("src/main/resources/bot.properties"));
-            return properties.getProperty("bot_name");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return getProperty.getBotProperty("bot_name");
     }
 
     @Override
     public String getBotToken() {
-        try {
-            properties.load(new FileInputStream("src/main/resources/bot.properties"));
-            return properties.getProperty("bot_token");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return getProperty.getBotProperty("bot_token");
     }
     public void startTest() throws IOException, InterruptedException {
         processBuilder.directory(new File("/home/"));
-        process = processBuilder.start();
-//        process.getInputStream();
+        Process process = processBuilder.start();
         processBuilder.redirectErrorStream(true);
-        InputStream ins = process.getInputStream();
+        process.getInputStream();
         process.waitFor();
-        int exitCode = process.exitValue();
+        process.exitValue();
         process.destroy();
     }
 
@@ -76,7 +58,7 @@ public class Bot extends TelegramLongPollingBot {
                 //Добавляем в наше сообщение id чата а также наш ответ
                 outMess.setChatId(chatId);
                 outMess.setText(response);
-                outMess.setReplyMarkup(keyBoard.replyKeyboardMarkup);
+                outMess.setReplyMarkup(keyBoard.getReplyKeyboardMarkup());
 
                 //Отправка в чат
                 execute(outMess);
