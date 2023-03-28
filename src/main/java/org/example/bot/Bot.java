@@ -1,5 +1,6 @@
-package org.example.Bot;
+package org.example.bot;
 
+import lombok.SneakyThrows;
 import org.example.interfaces.IAll;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -8,13 +9,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.File;
 import java.io.IOException;
 
 
 public class Bot extends TelegramLongPollingBot implements IAll {
     Storage storage;
-    ProcessBuilder processBuilder = new ProcessBuilder(getProperty.getCommandProperty("command").split(" "));
+    String zipFilePath = "src/main/resources/zipDir/allure-report.zip";
+    String destDir = "src/main/resources/unzipDir/";
 
     public Bot() {
         storage = new Storage();
@@ -30,15 +31,6 @@ public class Bot extends TelegramLongPollingBot implements IAll {
     @Override
     public String getBotToken() {
         return getProperty.getBotProperty("bot_token");
-    }
-    public void startTest() throws IOException, InterruptedException {
-        processBuilder.directory(new File("/home/"));
-        Process process = processBuilder.start();
-        processBuilder.redirectErrorStream(true);
-        process.getInputStream();
-        process.waitFor();
-        process.exitValue();
-        process.destroy();
     }
 
     @Override
@@ -67,7 +59,7 @@ public class Bot extends TelegramLongPollingBot implements IAll {
             e.printStackTrace();
         }
     }
-
+    @SneakyThrows
     public String parseMessage(String textMsg) {
         String response;
 
@@ -81,18 +73,21 @@ public class Bot extends TelegramLongPollingBot implements IAll {
                 keyBoard.initKeyboard("Project 1","Project 2");
             }
             case "/project1", "Project 1" -> {
-                try {
-                    response = "Тест 1 запускается...";
-                    startTest();
+                    response = "Project 1 запускается...";
+                    processHelper.startProcess(getProperty.getCommandProperty("startTest"));
                     keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
-                    return response;
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+//                    return response;
             }
             case "/project2", "Project 2" -> {
                 response = "Project 2 запускается...";
+/*                unzipClass.deleteFIle("src/main/resources/zipDir/");
+                unzipClass.deleteFIle(destDir);
+                processHelper.startProcess(getProperty.getCommandProperty("download"));
+                unzipClass.extractFolder(zipFilePath,destDir);
+//                processHelper.jsonCheker();
                 keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
+                response=unzipClass.ParseJsonFromFile("src/main/resources/unzipDir/allure-report/widgets/summary.json").toString();*/
+                System.out.println(response);
             }
             default -> response = "Сообщение не распознано";
         }

@@ -1,4 +1,4 @@
-package org.example.Bot;
+package org.example.bot;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,7 +13,6 @@ public class Storage {
     {
         quoteList = new ArrayList<>();
         parser("https://vk.com/jumoreski");
-
     }
 
     String getRandQuote()

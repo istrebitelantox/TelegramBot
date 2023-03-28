@@ -1,4 +1,4 @@
-package org.example.Rest;
+package org.example.spring;
 
 import lombok.Getter;
 import lombok.Setter;

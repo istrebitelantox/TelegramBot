@@ -1,4 +1,4 @@
-package org.example.Bot;
+package org.example.bot;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class KeyBoard {
     ReplyKeyboardMarkup replyKeyboardMarkup= new ReplyKeyboardMarkup();
 
-    void initKeyboard(String text1, String text2)
+    void initKeyboard(String firstBtn, String secondBtn)
     {
         //Создаем объект будущей клавиатуры и выставляем нужные настройки
 //        replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -25,8 +25,8 @@ public class KeyBoard {
         KeyboardRow keyboardRow = new KeyboardRow();
         keyboardRows.add(keyboardRow);
         //Добавляем одну кнопку с текстом "Посмеяться" наш ряд
-        keyboardRow.add(new KeyboardButton(text1));
-        keyboardRow.add(new KeyboardButton(text2));
+        keyboardRow.add(new KeyboardButton(firstBtn));
+        keyboardRow.add(new KeyboardButton(secondBtn));
         //добавляем лист с одним рядом кнопок в главный объект
         replyKeyboardMarkup.setKeyboard(keyboardRows);
     }

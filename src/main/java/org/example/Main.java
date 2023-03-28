@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.Bot.Bot;
+import org.example.bot.Bot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
