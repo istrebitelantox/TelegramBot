@@ -1,9 +1,8 @@
-package org.example.pojo;
+package ru.kptc.pojo;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class Time {
     private long start;
@@ -21,7 +20,7 @@ public class Time {
     public String toString() {
         String newStart=parseDate(start);
         String newStop=parseDate(stop);
-        long newDuration= TimeUnit.MILLISECONDS.toSeconds(duration);
+        float newDuration=duration/1000F;
         return "" +
                 "\n\t\t🛫start=" + newStart +
                 ",\n\t\t🛬stop=" + newStop +

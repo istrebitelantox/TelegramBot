@@ -1,17 +1,17 @@
-package org.example.helpClasses;
+package ru.kptc.helpClasses;
 
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
-import org.example.interfaces.IAll;
-import org.example.pojo.Summary;
+import ru.kptc.interfaces.All;
+import ru.kptc.pojo.Summary;
 
 import java.io.*;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class UnzipClass implements IAll {
+public class UnzipClass implements All {
 @SneakyThrows
     public static void main(String[] args)  {
 //    System.out.println(ParseJsonFromFile("src/main/resources/unzipDir/allure-report/widgets/summary.json"));
@@ -63,6 +63,7 @@ public class UnzipClass implements IAll {
                     dest.flush();
                     dest.close();
                     is.close();
+                    deleteFIle("src/main/resources/zipDir/");
                 }
             }
         }
@@ -91,8 +92,7 @@ public class UnzipClass implements IAll {
         }
     }
     @SneakyThrows
-    public Summary Check(){
-        deleteFIle("src/main/resources/zipDir/");
+    public Summary SendToBot(){
         processHelper.startProcess(getProperty.getCommandProperty("download"));
         extractFolder("src/main/resources/zipDir/allure-report.zip","src/main/resources/unzipDir/");
         return ParseJsonFromFile("src/main/resources/unzipDir/allure-report/widgets/summary.json");

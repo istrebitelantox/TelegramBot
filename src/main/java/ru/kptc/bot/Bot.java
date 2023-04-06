@@ -1,25 +1,19 @@
-package org.example.bot;
+package ru.kptc.bot;
 
 import lombok.SneakyThrows;
-import org.example.interfaces.IAll;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.kptc.interfaces.All;
 
-import java.io.IOException;
 
-
-public class Bot extends TelegramLongPollingBot implements IAll {
+public class Bot extends TelegramLongPollingBot implements All {
     Storage storage;
-    String zipFilePath = "src/main/resources/zipDir/allure-report.zip";
-    String destDir = "src/main/resources/unzipDir/";
 
     public Bot() {
         storage = new Storage();
-        keyBoard.setReplyKeyboardMarkup(new ReplyKeyboardMarkup());
         keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
     }
 
@@ -71,26 +65,16 @@ public class Bot extends TelegramLongPollingBot implements IAll {
             case "/jen", "Запуск автотестов" -> {
                 response="Выберите проект";
                 keyBoard.initKeyboard("Project 1","Project 2");
+                return response;
             }
             case "/project1", "Project 1" -> {
                     response = "Project 1 запускается...";
                     processHelper.startProcess(getProperty.getCommandProperty("startTest"));
-                    keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
-//                    return response;
             }
-            case "/project2", "Project 2" -> {
-                response = "Project 2 запускается...";
-/*                unzipClass.deleteFIle("src/main/resources/zipDir/");
-                unzipClass.deleteFIle(destDir);
-                processHelper.startProcess(getProperty.getCommandProperty("download"));
-                unzipClass.extractFolder(zipFilePath,destDir);
-//                processHelper.jsonCheker();
-                keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
-                response=unzipClass.ParseJsonFromFile("src/main/resources/unzipDir/allure-report/widgets/summary.json").toString();*/
-                System.out.println(response);
-            }
+            case "/project2", "Project 2" -> response = "Project 2 запускается...";
             default -> response = "Сообщение не распознано";
         }
+        keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
         return response;
     }
 }

@@ -1,8 +1,8 @@
-package org.example.pojo;
+package ru.kptc.pojo;
 
 import java.util.List;
 
-public class Summary {
+public class Summary  {
     private String reportName;
     private List<String> testRuns;
     private Statistic statistic;

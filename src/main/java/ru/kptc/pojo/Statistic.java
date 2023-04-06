@@ -1,4 +1,4 @@
-package org.example.pojo;
+package ru.kptc.pojo;
 
 public class Statistic {
     private int failed;

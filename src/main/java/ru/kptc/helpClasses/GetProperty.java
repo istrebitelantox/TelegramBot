@@ -1,11 +1,13 @@
-package org.example.helpClasses;
+package ru.kptc.helpClasses;
 
-import org.example.interfaces.IAll;
+import ru.kptc.interfaces.All;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
 
-public class GetProperty implements IAll {
+public class GetProperty implements All {
+    Properties properties=new Properties();
     public String getBotProperty(String propertyName ){
         try {
             properties.load(new FileInputStream("src/main/resources/bot.properties"));

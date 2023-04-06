@@ -1,4 +1,4 @@
-package org.example.bot;
+package ru.kptc.bot;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

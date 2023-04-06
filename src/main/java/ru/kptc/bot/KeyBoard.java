@@ -1,15 +1,15 @@
-package org.example.bot;
+package ru.kptc.bot;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import ru.kptc.interfaces.All;
 
 import java.util.ArrayList;
+
 @Getter
-@Setter
-public class KeyBoard {
+public class KeyBoard implements All {
     ReplyKeyboardMarkup replyKeyboardMarkup= new ReplyKeyboardMarkup();
 
     void initKeyboard(String firstBtn, String secondBtn)

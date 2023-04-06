@@ -1,10 +1,9 @@
-package org.example.spring;
+package ru.kptc.spring;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter@Setter
 public class RestResponse{
-    private String param1;
-    private String param2;
+    private String param;
 }
