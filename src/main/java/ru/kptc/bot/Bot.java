@@ -1,12 +1,17 @@
 package ru.kptc.bot;
 
 import lombok.SneakyThrows;
+import org.springframework.util.ResourceUtils;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.kptc.interfaces.All;
+
+import java.io.File;
 
 
 public class Bot extends TelegramLongPollingBot implements All {
@@ -26,6 +31,16 @@ public class Bot extends TelegramLongPollingBot implements All {
     public String getBotToken() {
         return getProperty.getBotProperty("bot_token");
     }
+    @SneakyThrows
+    public void sendPhoto(String chatId, String imageCaption, String imagePath) {
+        InputFile file=new InputFile(new File(imagePath));
+        SendPhoto sendPhoto = new SendPhoto();
+        sendPhoto.setPhoto(file);
+        sendPhoto.setChatId(chatId);
+        sendPhoto.setCaption(imageCaption);
+        sendPhoto.setReplyMarkup(keyBoard.getReplyKeyboardMarkup());
+        execute(sendPhoto);
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -41,13 +56,25 @@ public class Bot extends TelegramLongPollingBot implements All {
                 //Создаем объект класса SendMessage - наш будущий ответ пользователю
                 SendMessage outMess = new SendMessage();
 
-                //Добавляем в наше сообщение id чата а также наш ответ
-                outMess.setChatId(chatId);
-                outMess.setText(response);
-                outMess.setReplyMarkup(keyBoard.getReplyKeyboardMarkup());
 
-                //Отправка в чат
-                execute(outMess);
+                if (response.equals("Project 2 запускается...")) {
+                    sendPhoto(chatId,response,"/home/yuriy/Pictures/Second.jpg");
+//                    InputFile file = new InputFile(new File("/home/yuriy/Pictures/Second.jpg"));
+//                    SendPhoto sendPhoto = new SendPhoto();
+//                    sendPhoto.setPhoto(file);
+//                    sendPhoto.setChatId(chatId);
+//                    sendPhoto.setCaption(response);
+//                    sendPhoto.setReplyMarkup(keyBoard.getReplyKeyboardMarkup());
+//                    execute(sendPhoto);
+                }
+                else {
+                    //Добавляем в наше сообщение id чата а также наш ответ
+                    outMess.setChatId(chatId);
+                    outMess.setText(response);
+                    outMess.setReplyMarkup(keyBoard.getReplyKeyboardMarkup());
+                    //Отправка в чат
+                    execute(outMess);
+                }
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -65,6 +92,7 @@ public class Bot extends TelegramLongPollingBot implements All {
             case "/jen", "Запуск автотестов" -> {
                 response="Выберите проект";
                 keyBoard.initKeyboard("Project 1","Project 2");
+                keyBoard.inlineKeyboard("Project 1","Project 2");
                 return response;
             }
             case "/project1", "Project 1" -> {
