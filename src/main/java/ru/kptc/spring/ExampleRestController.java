@@ -12,7 +12,7 @@ public class ExampleRestController implements All {
     @PostMapping(value = "/telegram")
     @SneakyThrows
     public String postMethod(@RequestBody RestResponse response){
-        Repository repository = new Repository();
+        Repository repository = new Repository(response.getParam());
         System.out.println(repository.getCommand());
         processHelper.startProcess(repository.getCommand());
         return response.getParam();

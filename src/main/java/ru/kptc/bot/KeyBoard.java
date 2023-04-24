@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 @Getter
 public class KeyBoard implements All {
-    ReplyKeyboardMarkup replyKeyboardMarkup= new ReplyKeyboardMarkup();
+    ReplyKeyboardMarkup replyKeyboardMarkup=new ReplyKeyboardMarkup();
 
     void initKeyboard(String firstBtn, String secondBtn)
     {

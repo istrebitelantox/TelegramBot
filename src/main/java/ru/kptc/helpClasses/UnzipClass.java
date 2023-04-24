@@ -12,11 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class UnzipClass implements All {
-@SneakyThrows
-    public static void main(String[] args)  {
-//    System.out.println(ParseJsonFromFile("src/main/resources/unzipDir/allure-report/widgets/summary.json"));
-    }
-    private void extractFolder(String zipFile,String extractFolder)
+    void extractFolder(String zipFile, String extractFolder)
     {
         try
         {
@@ -76,7 +72,7 @@ public class UnzipClass implements All {
         FileUtils.cleanDirectory(directory);
     }
     @SneakyThrows
-    private Summary ParseJsonFromFile(String fileDir){
+    Summary ParseJsonFromFile(String fileDir){
         Gson gson = new Gson();
         try {
             File file=new File(fileDir);
