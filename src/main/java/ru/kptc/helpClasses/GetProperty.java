@@ -8,14 +8,7 @@ import java.util.Properties;
 
 public class GetProperty implements All {
     Properties properties=new Properties();
-    public String getBotProperty(String propertyName ){
-        try {
-            properties.load(new FileInputStream("src/main/resources/bot.properties"));
-            return properties.getProperty(propertyName);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
     public String getCommandProperty(String propertyName ){
         try {
             properties.load(new FileInputStream("src/main/resources/command.properties"));

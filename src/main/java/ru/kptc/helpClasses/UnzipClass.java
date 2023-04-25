@@ -2,8 +2,10 @@ package ru.kptc.helpClasses;
 
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.io.FileUtils;
 import ru.kptc.interfaces.All;
+import ru.kptc.interfaces.Commands;
 import ru.kptc.pojo.Summary;
 
 import java.io.*;
@@ -12,6 +14,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class UnzipClass implements All {
+    private final Commands commands = ConfigFactory.create(Commands.class);
     void extractFolder(String zipFile, String extractFolder)
     {
         try
@@ -64,6 +67,7 @@ public class UnzipClass implements All {
             }
         }
         catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
     @SneakyThrows
@@ -89,7 +93,7 @@ public class UnzipClass implements All {
     }
     @SneakyThrows
     public Summary SendToBot(){
-        processHelper.startProcess(getProperty.getCommandProperty("download"));
+        processHelper.startProcess(commands.download());
         extractFolder("src/main/resources/zipDir/allure-report.zip","src/main/resources/unzipDir/");
         return ParseJsonFromFile("src/main/resources/unzipDir/allure-report/widgets/summary.json");
     }

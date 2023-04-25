@@ -1,49 +1,39 @@
 package ru.kptc.bot;
 
 import lombok.SneakyThrows;
-import org.springframework.util.ResourceUtils;
+import org.aeonbits.owner.ConfigFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.kptc.interfaces.All;
-
-import java.io.File;
+import ru.kptc.interfaces.BotConfig;
+import ru.kptc.interfaces.Commands;
 
 
 public class Bot extends TelegramLongPollingBot implements All {
-    Storage storage;
+    private final BotConfig cfg = ConfigFactory.create(BotConfig.class);
+    private final Commands commands = ConfigFactory.create(Commands.class);
 
     public Bot() {
-        storage = new Storage();
-        keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
+        keyBoard.initKeyboard("Меню");
     }
 
     @Override
     public String getBotUsername() {
-        return getProperty.getBotProperty("bot_name");
+        return cfg.botName();
     }
 
     @Override
     public String getBotToken() {
-        return getProperty.getBotProperty("bot_token");
+        return cfg.botToken();
     }
-    @SneakyThrows
-    public void sendPhoto(String chatId, String imageCaption, String imagePath) {
-        InputFile file=new InputFile(new File(imagePath));
-        SendPhoto sendPhoto = new SendPhoto();
-        sendPhoto.setPhoto(file);
-        sendPhoto.setChatId(chatId);
-        sendPhoto.setCaption(imageCaption);
-        sendPhoto.setReplyMarkup(keyBoard.getReplyKeyboardMarkup());
-        execute(sendPhoto);
-    }
-
     @Override
+    @SneakyThrows
     public void onUpdateReceived(Update update) {
+        //Создаем объект класса SendMessage - наш будущий ответ пользователю
+        SendMessage outMess = new SendMessage();
         try{
             if(update.hasMessage() && update.getMessage().hasText())
             {
@@ -52,28 +42,45 @@ public class Bot extends TelegramLongPollingBot implements All {
                 //Достаем из inMess id чата пользователя
                 String chatId = inMess.getChatId().toString();
                 //Получаем текст сообщения пользователя, отправляем в написанный нами обработчик
-                String response = parseMessage(inMess.getText());
-                //Создаем объект класса SendMessage - наш будущий ответ пользователю
-                SendMessage outMess = new SendMessage();
-
-
-                if (response.equals("Project 2 запускается...")) {
-                    sendPhoto(chatId,response,"/home/yuriy/Pictures/Second.jpg");
-//                    InputFile file = new InputFile(new File("/home/yuriy/Pictures/Second.jpg"));
-//                    SendPhoto sendPhoto = new SendPhoto();
-//                    sendPhoto.setPhoto(file);
-//                    sendPhoto.setChatId(chatId);
-//                    sendPhoto.setCaption(response);
-//                    sendPhoto.setReplyMarkup(keyBoard.getReplyKeyboardMarkup());
-//                    execute(sendPhoto);
-                }
-                else {
-                    //Добавляем в наше сообщение id чата а также наш ответ
-                    outMess.setChatId(chatId);
-                    outMess.setText(response);
+                String response = parseMessage(inMess.getText(),chatId);
+                //Добавляем в наше сообщение id чата а также наш ответ
+                outMess.setChatId(chatId);
+                outMess.setText(response);
+                if(inMess.getText().equals("Меню")||inMess.getText().equals("Старт"))
+                    outMess.setReplyMarkup(keyBoard.getMarkupInline());
+                else
                     outMess.setReplyMarkup(keyBoard.getReplyKeyboardMarkup());
-                    //Отправка в чат
-                    execute(outMess);
+                //Отправка в чат
+                execute(outMess);
+            }
+            else if (update.hasCallbackQuery()) {
+                // Set variables
+                String call_data = update.getCallbackQuery().getData();
+                String chat_id = update.getCallbackQuery().getMessage().getChatId().toString();
+                outMess.setChatId(chat_id);
+
+                switch (call_data){
+                    case "jobsList" ->{
+                        outMess.setText("Список job'ов");
+                        outMess.setReplyMarkup(keyBoard.inlineKeyboard("Project 1","Project 1"));
+                        execute(outMess);
+                    }
+                    case "Project 1"->{
+                        outMess.setText("Будет сделано!");
+                        processHelper.startProcess(commands.startTest());
+//                        outMess.setReplyMarkup(keyBoard.inlineKeyboard("Click on me","Oh my, you clicked on me!"));
+                        execute(outMess);
+                    }
+//                    case "Oh my, you clicked on me!"->{
+//                        outMess.setText(call_data);
+//                        outMess.setReplyMarkup(keyBoard.inlineKeyboard("Click on me again","Oh my, you clicked on me again!"));
+//                        execute(outMess);
+//                    }
+//                    case "Oh my, you clicked on me again!"-> execute(sendHelper.sendPhoto(chat_id,call_data,"/home/yuriy/Pictures/Second.jpg"));
+//                    default ->{
+//                        outMess.setText("Сообщение не распознано");
+//                        execute(outMess);
+//                    }
                 }
             }
         } catch (TelegramApiException e) {
@@ -81,28 +88,25 @@ public class Bot extends TelegramLongPollingBot implements All {
         }
     }
     @SneakyThrows
-    public String parseMessage(String textMsg) {
+    public String parseMessage(String textMsg,String chatId) {
         String response;
 
         //Сравниваем текст пользователя с нашими командами, на основе этого формируем ответ
         switch (textMsg) {
-            case "/start","Старт" ->
+            case "/start","Старт" ->{
                     response = "Приветствую, бот знает много анекдотов. Жми \"Посмеятся\", чтобы получить случайный из них";
-            case "/get", "Посмеяться" -> response = storage.getRandQuote();
-            case "/jen", "Запуск автотестов" -> {
-                response="Выберите проект";
-                keyBoard.initKeyboard("Project 1","Project 2");
-                keyBoard.inlineKeyboard("Project 1","Project 2");
+                    keyBoard.inlineKeyboard("Начать работу","старт");
+                    return response;
+            }
+            case "/jen", "Меню" -> {
+                execute(sendHelper.sendPhoto(chatId,"","/home/yuriy/Pictures/Fourth.jpg"));
+                response="Чего изволите?";
+                keyBoard.inlineKeyboard("Запустить job'у","jobsList");
                 return response;
             }
-            case "/project1", "Project 1" -> {
-                    response = "Project 1 запускается...";
-                    processHelper.startProcess(getProperty.getCommandProperty("startTest"));
-            }
-            case "/project2", "Project 2" -> response = "Project 2 запускается...";
             default -> response = "Сообщение не распознано";
         }
-        keyBoard.initKeyboard("Посмеяться","Запуск автотестов");
+        keyBoard.initKeyboard("Меню");
         return response;
     }
 }
