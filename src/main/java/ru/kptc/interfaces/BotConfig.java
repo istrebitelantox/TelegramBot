@@ -6,4 +6,5 @@ import org.aeonbits.owner.Config.Sources;
 public interface BotConfig extends Config {
     String botToken();
     String botName();
+    String chatId();
 }
