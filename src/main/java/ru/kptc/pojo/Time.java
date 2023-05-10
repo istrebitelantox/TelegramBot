@@ -21,8 +21,7 @@ public class Time {
         String newStart=parseDate(start);
         String newStop=parseDate(stop);
         float newDuration=duration/1000F;
-        return "" +
-                "\n\t\t🛫start=" + newStart +
+        return "\n\t\t🛫start=" + newStart +
                 ",\n\t\t🛬stop=" + newStop +
                 ",\n\t\t⌚duration=" + newDuration+" sec";
     }

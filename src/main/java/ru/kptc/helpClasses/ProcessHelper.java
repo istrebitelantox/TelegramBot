@@ -1,11 +1,21 @@
 package ru.kptc.helpClasses;
 
-import ru.kptc.interfaces.All;
-
 import java.io.File;
 import java.io.IOException;
 
-public class ProcessHelper implements All {
+public class ProcessHelper {
+    private static ProcessHelper processHelper = null;
+
+    public static synchronized ProcessHelper getProcHelp() {
+        if (processHelper == null) {
+            processHelper = new ProcessHelper();
+        }
+
+        return processHelper;
+    }
+    private ProcessHelper(){
+
+    }
     String string;
 
     public void startProcess(String command) throws IOException, InterruptedException {

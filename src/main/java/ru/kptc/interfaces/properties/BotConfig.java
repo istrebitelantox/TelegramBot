@@ -1,4 +1,4 @@
-package ru.kptc.interfaces;
+package ru.kptc.interfaces.properties;
 
 import org.aeonbits.owner.Config;
 import org.aeonbits.owner.Config.Sources;
