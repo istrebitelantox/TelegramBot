@@ -11,18 +11,20 @@ public class Time {
     private int minDuration;
     private int maxDuration;
     private int sumDuration;
-    private String parseDate(long sec){
+
+    private String parseDate(long sec) {
         DateFormat obj = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
-        Date res=new Date(sec);
+        Date res = new Date(sec);
         return obj.format(res);
     }
+
     @Override
     public String toString() {
-        String newStart=parseDate(start);
-        String newStop=parseDate(stop);
-        float newDuration=duration/1000F;
+        String newStart = parseDate(start);
+        String newStop = parseDate(stop);
+        float newDuration = duration / 1000F;
         return "\n\t\t🛫start=" + newStart +
                 ",\n\t\t🛬stop=" + newStop +
-                ",\n\t\t⌚duration=" + newDuration+" sec";
+                ",\n\t\t⌚duration=" + newDuration + " sec";
     }
 }

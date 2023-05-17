@@ -2,9 +2,9 @@ package ru.kptc.helpClasses;
 
 import lombok.SneakyThrows;
 
-public class Sender  {
+public class Sender {
     @SneakyThrows
-    public boolean SendToBot(String text){
+    public boolean SendToBot(String text) {
 /*
         processHelper.startProcess(getProperty.getCommandProperty("download"));
         extractFolder("src/main/resources/zipDir/allure-report.zip","src/main/resources/unzipDir/");

@@ -24,23 +24,27 @@ public class SendMessageHelper {
 
         return sendMessageHelper;
     }
-    private SendMessageHelper(){
+
+    private SendMessageHelper() {
 
     }
-    public SendMessage sendMessage(String answer, String chat_id){
+
+    public SendMessage sendMessage(String answer, String chat_id) {
         SendMessage new_message = new SendMessage();
         new_message.setChatId(chat_id);
         new_message.setText(answer);
         return new_message;
     }
-    public EditMessageText editMessage(String answer, String chat_id, long message_id){
+
+    public EditMessageText editMessage(String answer, String chat_id, long message_id) {
         EditMessageText new_message = new EditMessageText();
         new_message.setChatId(chat_id);
         new_message.setMessageId(toIntExact(message_id));
         new_message.setText(answer);
         return new_message;
     }
-    public EditMessageCaption editMessageCapt(String answer, String chat_id, long message_id){
+
+    public EditMessageCaption editMessageCapt(String answer, String chat_id, long message_id) {
         EditMessageCaption new_message = new EditMessageCaption();
         new_message.setChatId(chat_id);
         new_message.setMessageId(toIntExact(message_id));
@@ -48,8 +52,9 @@ public class SendMessageHelper {
 //        new_message.setText(answer);
         return new_message;
     }
-    public EditMessageMedia editMessageMedia(String imagePath,String answer, String chat_id, long message_id){
-        InputMediaPhoto inputMediaPhoto=new InputMediaPhoto(imagePath);
+
+    public EditMessageMedia editMessageMedia(String imagePath, String answer, String chat_id, long message_id) {
+        InputMediaPhoto inputMediaPhoto = new InputMediaPhoto(imagePath);
         inputMediaPhoto.setCaption(answer);
         EditMessageMedia new_message = new EditMessageMedia();
         new_message.setChatId(chat_id);
@@ -58,16 +63,18 @@ public class SendMessageHelper {
 //        new_message.setText(answer);
         return new_message;
     }
-    public EditMessageReplyMarkup editMessageInKey( String chat_id, long message_id){
+
+    public EditMessageReplyMarkup editMessageInKey(String chat_id, long message_id) {
         EditMessageReplyMarkup new_message = new EditMessageReplyMarkup();
         new_message.setChatId(chat_id);
         new_message.setMessageId(toIntExact(message_id));
         new_message.setReplyMarkup(null);
         return new_message;
     }
+
     @SneakyThrows
     public SendPhoto sendPhoto(String chatId, String imageCaption, String imagePath) {
-        InputFile file=new InputFile(new File(imagePath));
+        InputFile file = new InputFile(new File(imagePath));
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setPhoto(file);
         sendPhoto.setChatId(chatId);

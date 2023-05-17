@@ -13,9 +13,11 @@ public class ProcessHelper {
 
         return processHelper;
     }
-    private ProcessHelper(){
+
+    private ProcessHelper() {
 
     }
+
     String string;
 
     public void startProcess(String command) throws IOException, InterruptedException {

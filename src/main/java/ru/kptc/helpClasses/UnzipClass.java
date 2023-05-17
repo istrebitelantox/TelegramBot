@@ -2,8 +2,9 @@ package ru.kptc.helpClasses;
 
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.io.FileUtils;
-import ru.kptc.interfaces.ConfigFactoryCreater;
+import ru.kptc.interfaces.properties.Commands;
 import ru.kptc.pojo.Summary;
 
 import java.io.*;
@@ -100,7 +101,7 @@ public class UnzipClass {
 
     @SneakyThrows
     public Summary GetSummaryInfo() {
-        ProcessHelper.getProcHelp().startProcess(ConfigFactoryCreater.commands.download());
+        ProcessHelper.getProcHelp().startProcess(ConfigFactory.create(Commands.class).download());
         extractFolder("src/main/resources/zipDir/allure-report.zip", "src/main/resources/unzipDir/");
         return ParseJsonFromFile("src/main/resources/unzipDir/allure-report/widgets/summary.json");
     }
